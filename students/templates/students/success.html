@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submission Successful</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-lg p-8 space-y-6 bg-white rounded-xl shadow-lg text-center m-4">
+        <svg class="w-20 h-20 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <h1 class="text-3xl font-bold text-gray-800">Application Submitted!</h1>
+        <p class="text-gray-600">Thank you, <span class="font-semibold">{{ student.student_name }}</span>. Your application has been received.</p>
+        
+        <div class="text-left bg-gray-50 p-6 rounded-lg border border-gray-200">
+            <h3 class="font-semibold text-lg text-gray-700 mb-4">Your Submission Details:</h3>
+            <p class="text-gray-600"><strong>Course:</strong> {{ student.course }}</p>
+            <p class="text-gray-600"><strong>Email:</strong> {{ student.email }}</p>
+            <div class="mt-4 pt-4 border-t-2 border-dashed">
+                <p class="text-gray-800 font-bold text-lg">Your Unique ID is:</p>
+                <p class="text-2xl font-bold text-indigo-600 bg-indigo-100 p-3 rounded-lg text-center mt-2">{{ student.unique_id }}</p>
+                <p class="text-sm text-gray-500 mt-2">Please save this ID for future reference.</p>
+            </div>
+        </div>
+
+        <div class="mt-8">
+            <a href="{% url 'student_form' %}" class="px-6 py-2 text-md font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-300">
+                Submit Another Form
+            </a>
+        </div>
+    </div>
+</body>
+</html>

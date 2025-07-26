@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Admission Form</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc;
+        }
+        /* The invalid @apply rules have been removed from here. */
+        /* Styling will now be applied via JavaScript. */
+        .form-label {
+            @apply text-gray-700 font-semibold;
+        }
+        .error-text {
+            @apply text-red-600 text-sm mt-1;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-lg p-8 space-y-6 bg-white rounded-lg shadow-md m-4">
+        <div class="text-center">
+            <h1 class="text-2xl font-bold text-gray-900">Student Admission Form</h1>
+            <p class="text-gray-600 mt-1">Fill in your details below.</p>
+        </div>
+        
+        <form method="post" novalidate class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Student Name -->
+            <div>
+                <label for="{{ form.student_name.id_for_label }}" class="form-label">{{ form.student_name.label }}</label>
+                {{ form.student_name }}
+                {% if form.student_name.errors %}
+                    <p class="error-text">{{ form.student_name.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Date of Birth -->
+            <div>
+                <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">{{ form.date_of_birth.label }}</label>
+                {{ form.date_of_birth }}
+                <p id="age-display" class="text-sm text-indigo-600 mt-2 font-medium"></p>
+                {% if form.date_of_birth.errors %}
+                    <p class="error-text">{{ form.date_of_birth.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Course Selection -->
+            <div>
+                <label for="{{ form.course.id_for_label }}" class="form-label">{{ form.course.label }}</label>
+                {{ form.course }}
+                {% if form.course.errors %}
+                    <p class="error-text">{{ form.course.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <!-- Email -->
+            <div>
+                <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
+                {{ form.email }}
+                 {% if form.email.errors %}
+                    <p class="error-text">{{ form.email.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Mobile Number -->
+            <div>
+                <label for="{{ form.mobile_number.id_for_label }}" class="form-label">{{ form.mobile_number.label }}</label>
+                {{ form.mobile_number }}
+                 {% if form.mobile_number.errors %}
+                    <p class="error-text">{{ form.mobile_number.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Qualification Percentage -->
+            <div>
+                <label for="{{ form.qualification_percentage.id_for_label }}" class="form-label">{{ form.qualification_percentage.label }}</label>
+                {{ form.qualification_percentage }}
+                <p id="eligibility-message" class="text-sm mt-2 font-medium"></p>
+                {% if form.qualification_percentage.errors %}
+                    <p class="error-text">{{ form.qualification_percentage.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <button type="submit" id="submit-btn" class="w-full px-6 py-3 text-lg font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-300 disabled:bg-gray-400">
+                    Submit Application
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // FIX: Add styling classes to form elements using JavaScript
+            const inputClasses = 'w-full p-3 mt-1 text-gray-700 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200';
+            
+            document.querySelectorAll('form input[type="text"], form input[type="date"], form input[type="email"], form input[type="number"], form select').forEach(el => {
+                el.className = inputClasses;
+            });
+
+            const dobInput = document.getElementById('{{ form.date_of_birth.id_for_label }}');
+            const ageDisplay = document.getElementById('age-display');
+            const percentageInput = document.getElementById('{{ form.qualification_percentage.id_for_label }}');
+            const eligibilityMessage = document.getElementById('eligibility-message');
+            const submitBtn = document.getElementById('submit-btn');
+
+            function calculateAge() {
+                if (!dobInput || !ageDisplay) return;
+                const dob = new Date(dobInput.value);
+                if (isNaN(dob.getTime())) {
+                    ageDisplay.textContent = '';
+                    return;
+                }
+                const today = new Date();
+                let age = today.getFullYear() - dob.getFullYear();
+                const m = today.getMonth() - dob.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                    age--;
+                }
+                ageDisplay.textContent = age > 0 ? `Your Age: ${age} years` : '';
+            }
+
+            function checkEligibility() {
+                if (!percentageInput || !submitBtn || !eligibilityMessage) return;
+                
+                const percentage = parseFloat(percentageInput.value);
+                if (isNaN(percentage)) {
+                    eligibilityMessage.textContent = '';
+                    submitBtn.disabled = true;
+                    return;
+                }
+                if (percentage >= 75) {
+                    eligibilityMessage.textContent = '✅ You are eligible to apply.';
+                    eligibilityMessage.className = 'text-sm mt-2 font-medium text-green-600';
+                    submitBtn.disabled = false;
+                } else {
+                    eligibilityMessage.textContent = '❌ Minimum 75% is required to apply.';
+                    eligibilityMessage.className = 'text-sm mt-2 font-medium text-red-600';
+                    submitBtn.disabled = true;
+                }
+            }
+
+            if (dobInput) dobInput.addEventListener('input', calculateAge);
+            if (percentageInput) percentageInput.addEventListener('input', checkEligibility);
+
+            calculateAge();
+            checkEligibility();
+        });
+    </script>
+</body>
+</html>
